@@ -9,6 +9,8 @@ from button import Button
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+
+
 class AlienInvasion:
     """Overall class to manage game assets and behavior."""
 
@@ -72,6 +74,7 @@ class AlienInvasion:
             # Reset the game statistics.
             self.stats.reset_stats()
             self.game_active = True
+
             # Get rid of any remaining bullets and aliens.
             self.bullets.empty()
             self.aliens.empty()
@@ -81,11 +84,10 @@ class AlienInvasion:
             self.ship.center_ship()
 
             # Hide the mouse cursor.
-            pygame.mouse.set_visible(False)
-            
+            pygame.mouse.set_visible(False)          
 
 
-    def _check_keydown_events(self,event):
+    def _check_keydown_events(self, event):
         """Respond to keypresses"""
         if event.key == pygame.K_RIGHT:
             self.ship.moving_right = True
@@ -125,26 +127,15 @@ class AlienInvasion:
     def _check_bullet_alien_collisions(self):
         """ Respond to bullet-alien collisions"""
         # Remove any bullets and aliens that have collided.
-        collisions = pygame.sprite.groupcollide(self.bullets,self.aliens, True, True)
+        collisions = pygame.sprite.groupcollide(
+            self.bullets, self.aliens, True, True)
 
         if not self.aliens:
             # Destroy existing bullets and create new fleet.
             self.bullets.empty()
-            self._create_fleet
+            self._create_fleet()
             self.settings.increase_speed()
 
-    def _update_aliens(self):
-        """ Update the positions of all aliens in the fleet."""
-        self._check_fleet_edges()
-        self.aliens.update()
-
-        #Look for alien-ship collisions.
-        if pygame.sprite.spritecollideany(self.ship, self.aliens):
-            self._ship_hit()
-
-        #Look for aliens hitting the bottom.
-        self._check_aliens_bottom()
-    
     def _ship_hit(self):
         """ Respond to the ship being hit by alien"""
         if self.stats.ships_left > 0:
@@ -163,6 +154,20 @@ class AlienInvasion:
         else:
             self.game_active = False
             pygame.mouse.set_visible(True)
+
+
+    def _update_aliens(self):
+        """ Update the positions of all aliens in the fleet."""
+        self._check_fleet_edges()
+        self.aliens.update()
+
+        #Look for alien-ship collisions.
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+
+        #Look for aliens hitting the bottom.
+        self._check_aliens_bottom()
+    
 
     def _create_fleet(self):
         """ Create the fleet of aliens"""
